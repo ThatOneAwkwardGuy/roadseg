@@ -1,12 +1,12 @@
 import numpy as np
 import cv2
 
-def optical_flow(curr_img, prev_img,good_features_to_track,feature_params,lk_params,first_frame, p0, mask, color):
+def optical_flow(curr_img, prev_img,feature_params,lk_params,first_frame, p0, mask, color):
     while(1):
         frame = curr_img
         frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         old_gray = cv2.cvtColor(prev_img, cv2.COLOR_BGR2GRAY)
-        p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params, minEigThreshold = 1e-1)
+        p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
         good_new = p1[st==1]
         good_old = p0[st==1]
         for i,(new,old) in enumerate(zip(good_new,good_old)):
