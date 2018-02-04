@@ -13,6 +13,7 @@ from PIL import Image
 
 files_glob = glob.glob("./in/*.png")
 
+
 # def pil_grid(images, max_horiz=np.iinfo(int).max):
 #     n_images = len(images)
 #     n_horiz = min(n_images, max_horiz)
@@ -47,11 +48,27 @@ files_glob = glob.glob("./in/*.png")
 n = 0
 
 # Runs Background subtraction
+feature_params = dict( maxCorners = 100,
+                       qualityLevel = 0.3,
+                       minDistance = 2,
+                       blockSize = 7 )
+lk_params = dict( winSize  = (15,15),
+                  maxLevel = 2,
+                  criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+color = np.random.randint(0,255,(100,3))
+frame_1 = cv2.imread(files_glob[0])
+old_gray = cv2.cvtColor(frame_1, cv2.COLOR_BGR2GRAY)
+p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+mask = np.zeros_like(frame_1)
+gftt = cv2.goodFeaturesToTrack(cv2.cvtColor(frame_1, cv2.COLOR_BGR2GRAY), mask = None, **feature_params)
+
 for file in files_glob:
     while n < len(files_glob) - 1:
-        image = cv2.imread(files_glob[n+1])
+        img_curr = cv2.imread(files_glob[n+1])
         img_prev = cv2.imread(files_glob[n])
-        # result = of.optical_flow(image, img_prev)
-        cv2.imwrite('./opt_flow_out/' + str(n)+'.png',result)
+        result = of.optical_flow(img_curr, img_prev, gftt, feature_params, lk_params, frame_1, p0, mask, color)
+        cv2.imwrite('./opt_flow_out/' + str(n)+'.png',result[0])
+        old_gray = result[1]
+        p0 = result[2]
         print(n)
         n = n + 1
