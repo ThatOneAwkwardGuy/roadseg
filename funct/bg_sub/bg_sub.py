@@ -13,8 +13,9 @@ def bg_subtract(frame):
     final_image = resized_image.copy()
     for c in cnts:
         rect = cv2.boundingRect(c)
-        if rect[2] < 30 or rect[3] < 30: continue
-        # print cv2.contourArea(c)
+        # if rect[2] > 40 and rect[3] > 40:
+        #     x,y,w,h = rect
+        #     cv2.rectangle(final_image,(x,y),(x+w,y+h),(0,255,0),2)
         x,y,w,h = rect
         cv2.rectangle(final_image,(x,y),(x+w,y+h),(0,255,0),2)
         # cv2.putText(final_image,'',(x+w+10,y+h),0,0.3,(0,255,0))
